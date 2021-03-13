@@ -18,7 +18,7 @@
   align-items: flex-start;
   flex-direction: column;
   justify-content: space-between;
-  background: url('../assets/images/landing-ilustra.svg') no-repeat 80% center;
+  background: url('../../assets/images/landing-ilustra.svg') no-repeat 80% center;
 }
 
 #page-landing .content-wrapper main {
