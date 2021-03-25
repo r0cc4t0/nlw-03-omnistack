@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { FiPlus } from 'react-icons/fi';
-import { MapContainer, Marker, TileLayer } from 'react-leaflet';
-import Leaflet from 'leaflet';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import Leaflet, { LeafletMouseEvent } from 'leaflet';
 import './styles.css';
 import Sidebar from '../../components/Sidebar';
 import mapMarkerImg from '../../assets/images/map-marker.svg';
@@ -14,33 +14,81 @@ const happyMapIcon = Leaflet.icon({
 });
 
 const CreateOrphanage = () => {
+  const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
+  const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
+  const [name, setName] = useState('');
+  const [about, setAbout] = useState('');
+  const [instructions, setInstructions] = useState('');
+  const [openingHours, setOpeningHours] = useState('');
+  const [openOnWeekends, setOpenOnWeekends] = useState(true);
+
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(position => {
+      const { latitude, longitude } = position.coords;
+      setInitialPosition([latitude, longitude]);
+    });
+  }, []);
+
+  function LocationMarker() {
+    useMapEvents({
+      click(event: LeafletMouseEvent) {
+        setSelectedPosition([event.latlng.lat, event.latlng.lng]);
+      }
+    });
+    return (
+      <Marker
+        interactive={false}
+        icon={happyMapIcon}
+        position={selectedPosition}
+      />
+    );
+  }
+
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+    const latitude = selectedPosition[0];
+    const longitude = selectedPosition[1];
+    console.log({
+      latitude,
+      longitude,
+      name,
+      about,
+      instructions,
+      openingHours,
+      openOnWeekends
+    });
+  }
+
   return (
     <div id="page-create-orphanage">
       <Sidebar />
 
       <main>
-        <form className="create-orphanage-form">
+        <form className="create-orphanage-form" onSubmit={handleSubmit}>
           <fieldset>
             <legend>Dados</legend>
-            <MapContainer
-              center={[-27.2092052, -49.6401092]}
-              style={{ width: '100%', height: 280 }}
-              zoom={15}
-            >
-              <TileLayer
-                attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker
-                interactive={false}
-                icon={happyMapIcon}
-                position={[-27.2092052, -49.6401092]}
-              />
-            </MapContainer>
+
+            {initialPosition[0] !== 0 && initialPosition[1] !== 0 && (
+              <MapContainer
+                center={initialPosition}
+                style={{ width: '100%', height: 280 }}
+                zoom={15}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <LocationMarker />
+              </MapContainer>
+            )}
 
             <div className="input-block">
               <label htmlFor="name">Nome</label>
-              <input id="name" />
+              <input
+                id="name"
+                value={name}
+                onChange={event => setName(event.target.value)}
+              />
             </div>
 
             <div className="input-block">
@@ -48,13 +96,18 @@ const CreateOrphanage = () => {
                 Sobre
                 <span>Máximo de 300 caracteres.</span>
               </label>
-              <textarea id="name" maxLength={300} />
+              <textarea
+                id="name"
+                maxLength={300}
+                value={about}
+                onChange={event => setAbout(event.target.value)}
+              />
             </div>
 
             <div className="input-block">
               <label htmlFor="images">Fotos</label>
               <div className="uploaded-image"></div>
-              <button className="new-image">
+              <button type="button" className="new-image">
                 <FiPlus size={24} color="15b6d6" />
               </button>
             </div>
@@ -65,19 +118,39 @@ const CreateOrphanage = () => {
 
             <div className="input-block">
               <label htmlFor="instructions">Instruções</label>
-              <textarea id="instructions" />
+              <textarea
+                id="instructions"
+                value={instructions}
+                onChange={event => setInstructions(event.target.value)}
+              />
             </div>
 
             <div className="input-block">
-              <label htmlFor="opening_hours">Nome</label>
-              <input id="opening_hours" />
+              <label htmlFor="opening_hours">Horário de Funcionamento</label>
+              <input
+                id="opening_hours"
+                value={openingHours}
+                onChange={event => setOpeningHours(event.target.value)}
+              />
             </div>
 
             <div className="input-block">
               <label htmlFor="open_on_weekends">Atende fim de semana</label>
               <div className="button-select">
-                <button type="button" className="active">Sim</button>
-                <button type="button">Não</button>
+                <button
+                  type="button"
+                  className={openOnWeekends ? 'active' : ''}
+                  onClick={() => setOpenOnWeekends(true)}
+                >
+                  Sim
+                </button>
+                <button
+                  type="button"
+                  className={!openOnWeekends ? 'active' : ''}
+                  onClick={() => setOpenOnWeekends(false)}
+                >
+                  Não
+                </button>
               </div>
             </div>
           </fieldset>
