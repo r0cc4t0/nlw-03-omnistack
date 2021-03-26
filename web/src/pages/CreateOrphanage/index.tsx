@@ -1,8 +1,10 @@
-import React, { useEffect, useState, FormEvent } from 'react';
+import React, { useEffect, useState, FormEvent, ChangeEvent } from 'react';
 import { FiPlus } from 'react-icons/fi';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import Leaflet, { LeafletMouseEvent } from 'leaflet';
+import { useHistory } from 'react-router-dom';
 import './styles.css';
+import api from '../../services/api';
 import Sidebar from '../../components/Sidebar';
 import mapMarkerImg from '../../assets/images/map-marker.svg';
 
@@ -14,6 +16,8 @@ const happyMapIcon = Leaflet.icon({
 });
 
 const CreateOrphanage = () => {
+  const history = useHistory();
+
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
   const [name, setName] = useState('');
@@ -21,6 +25,8 @@ const CreateOrphanage = () => {
   const [instructions, setInstructions] = useState('');
   const [openingHours, setOpeningHours] = useState('');
   const [openOnWeekends, setOpenOnWeekends] = useState(true);
+  const [images, setImages] = useState<File[]>([]);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
 
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(position => {
@@ -44,19 +50,38 @@ const CreateOrphanage = () => {
     );
   }
 
-  function handleSubmit(event: FormEvent) {
+  function handleSelectImages(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files) {
+      return;
+    }
+    const selectedImages = Array.from(event.target.files);
+    setImages(selectedImages);
+    const selectedImagesPreview = selectedImages.map(image => {
+      return URL.createObjectURL(image);
+    });
+    setPreviewImages(selectedImagesPreview);
+  }
+
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
     const latitude = selectedPosition[0];
     const longitude = selectedPosition[1];
-    console.log({
-      latitude,
-      longitude,
-      name,
-      about,
-      instructions,
-      openingHours,
-      openOnWeekends
+
+    const data = new FormData();
+    data.append('name', name);
+    data.append('latitude', String(latitude));
+    data.append('longitude', String(longitude));
+    data.append('about', about);
+    data.append('instructions', instructions);
+    data.append('opening_hours', openingHours);
+    data.append('open_on_weekends', String(openOnWeekends));
+    images.forEach(image => {
+      data.append('images', image);
     });
+
+    await api.post('orphanages', data);
+    alert('Cadastro realizado com sucesso!');
+    history.push('/app');
   }
 
   return (
@@ -106,10 +131,23 @@ const CreateOrphanage = () => {
 
             <div className="input-block">
               <label htmlFor="images">Fotos</label>
-              <div className="uploaded-image"></div>
-              <button type="button" className="new-image">
-                <FiPlus size={24} color="15b6d6" />
-              </button>
+              <div className="images-container">
+                {previewImages.map(image => {
+                  return (
+                    <img key={image} src={image} alt={name} />
+                  );
+                })}
+                <label htmlFor="image[]" className="new-image">
+                  <FiPlus size={24} color="#15b6d6" />
+                </label>
+              </div>
+              <input
+                type="file"
+                multiple
+                onChange={handleSelectImages}
+                name="image[]"
+                id="image[]"
+              />
             </div>
           </fieldset>
 
