@@ -1,10 +1,38 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { RectButton } from 'react-native-gesture-handler';
+import MapView, { Marker } from 'react-native-maps';
+import styles from './styles';
+import mapMarker from '../../assets/images/map-marker.png';
 
 const SelectMapPosition = () => {
+  const navigation = useNavigation();
+
+  function handleNextStep() {
+    navigation.navigate('OrphanageData');
+  }
+
   return (
-    <View>
-      <Text>SelectMapPosition</Text>
+    <View style={styles.container}>
+      <MapView
+        initialRegion={{
+          latitude: -27.2092052,
+          longitude: -49.6401092,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01
+        }}
+        style={styles.mapStyle}
+      >
+        <Marker
+          icon={mapMarker}
+          coordinate={{ latitude: -27.2092052, longitude: -49.6401092 }}
+        />
+      </MapView>
+
+      <RectButton style={styles.nextButton} onPress={handleNextStep}>
+        <Text style={styles.nextButtonText}>Próximo</Text>
+      </RectButton>
     </View>
   );
 };
