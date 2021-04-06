@@ -9,7 +9,7 @@ import api from '../../services/api';
 import styles from './styles';
 
 interface OrphanageParams {
-  position: {
+  selectedPosition: {
     latitude: number;
     longitude: number;
   };
@@ -28,7 +28,7 @@ const OrphanageData = () => {
   const [images, setImages] = useState<string[]>([]);
 
   async function handleCreateOrphanage() {
-    const { latitude, longitude } = params.position;
+    const { latitude, longitude } = params.selectedPosition;
 
     const data = new FormData();
     data.append('name', name);
