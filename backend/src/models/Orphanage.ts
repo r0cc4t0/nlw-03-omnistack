@@ -17,6 +17,9 @@ export default class Orphanage {
   longitude: number;
 
   @Column()
+  whatsapp: string;
+
+  @Column()
   about: string;
 
   @Column()

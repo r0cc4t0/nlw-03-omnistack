@@ -8,6 +8,7 @@ export default {
       name: orphanage.name,
       latitude: orphanage.latitude,
       longitude: orphanage.longitude,
+      whatsapp: orphanage.whatsapp,
       about: orphanage.about,
       instructions: orphanage.instructions,
       opening_hours: orphanage.opening_hours,

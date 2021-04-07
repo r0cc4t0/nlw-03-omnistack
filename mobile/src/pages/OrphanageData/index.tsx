@@ -22,6 +22,7 @@ const OrphanageData = () => {
 
   const [name, setName] = useState('');
   const [about, setAbout] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [instructions, setInstructions] = useState('');
   const [openingHours, setOpeningHours] = useState('');
   const [openOnWeekends, setOpenOnWeekends] = useState(true);
@@ -34,6 +35,7 @@ const OrphanageData = () => {
     data.append('name', name);
     data.append('latitude', String(latitude));
     data.append('longitude', String(longitude));
+    data.append('whatsapp', whatsapp);
     data.append('about', about);
     data.append('instructions', instructions);
     data.append('opening_hours', openingHours);
@@ -87,8 +89,12 @@ const OrphanageData = () => {
         onChangeText={setAbout}
       />
 
-      {/* <Text style={styles.label}>WhatsApp</Text>
-      <TextInput style={styles.input} /> */}
+      <Text style={styles.label}>WhatsApp</Text>
+      <TextInput
+        style={styles.input}
+        value={whatsapp}
+        onChangeText={setWhatsapp}
+      />
 
       <Text style={styles.label}>Fotos</Text>
       <View style={styles.uploadedImagesContainer}>
