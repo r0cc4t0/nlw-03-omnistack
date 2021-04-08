@@ -20,6 +20,7 @@ interface OrphanageDetails {
   name: string;
   latitude: number;
   longitude: number;
+  whatsapp: string;
   about: string;
   instructions: string;
   opening_hours: string;
@@ -135,7 +136,7 @@ const Orphanage = () => {
             </div>
             <button type="button" className="contact-button">
               <FaWhatsapp size={20} color="#fff" />
-              Entrar em contato
+              {orphanage.whatsapp}
             </button>
           </div>
         </div>

@@ -21,6 +21,7 @@ const CreateOrphanage = () => {
   const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
   const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0, 0]);
   const [name, setName] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [about, setAbout] = useState('');
   const [instructions, setInstructions] = useState('');
   const [openingHours, setOpeningHours] = useState('');
@@ -71,6 +72,7 @@ const CreateOrphanage = () => {
     data.append('name', name);
     data.append('latitude', String(latitude));
     data.append('longitude', String(longitude));
+    data.append('whatsapp', whatsapp);
     data.append('about', about);
     data.append('instructions', instructions);
     data.append('opening_hours', openingHours);
@@ -113,6 +115,15 @@ const CreateOrphanage = () => {
                 id="name"
                 value={name}
                 onChange={event => setName(event.target.value)}
+              />
+            </div>
+
+            <div className="input-block">
+              <label htmlFor="whatsapp">WhatsApp</label>
+              <input
+                id="whatsapp"
+                value={whatsapp}
+                onChange={event => setWhatsapp(event.target.value)}
               />
             </div>
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiPlus, FiArrowRight } from 'react-icons/fi';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
-import Leaflet, { LeafletMouseEvent } from 'leaflet';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import Leaflet from 'leaflet';
 import './styles.css';
 import api from '../../services/api';
 import mapMarkerImg from '../../assets/images/map-marker.svg';
